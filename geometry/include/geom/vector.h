@@ -2,7 +2,7 @@
 
 #include "point.h"
 
-#include<algorithm>
+#include <algorithm>
 #include <cmath>
 
 namespace geom

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <geom/vector.h>
+#include <geom/basic_algorithm.h>
 
 
 
@@ -23,6 +24,12 @@ public:
     static constexpr scalar_type eps = eps_value();
 
     static void expect_vector_eq(const vector& l, const vector& r) {
+        EXPECT_NEAR(l.get_x(), r.get_x(), eps);
+        EXPECT_NEAR(l.get_y(), r.get_y(), eps);
+        EXPECT_NEAR(l.get_z(), r.get_z(), eps);
+    }
+
+    static void expect_point_eq(const point& l, const point& r) {
         EXPECT_NEAR(l.get_x(), r.get_x(), eps);
         EXPECT_NEAR(l.get_y(), r.get_y(), eps);
         EXPECT_NEAR(l.get_z(), r.get_z(), eps);
@@ -75,4 +82,15 @@ TYPED_TEST(GeomTest, CrossProduct) {
 
     TestFixture::expect_vector_eq(geom::cross_product(ox, oy), oz);
     TestFixture::expect_vector_eq(geom::cross_product(ox, ox), vector::zero());
+}
+
+TYPED_TEST(GeomTest, BasicAlgs) {
+    using vector =  typename TestFixture::vector; 
+    using point =  typename TestFixture::point; 
+    point a{ 1., 0., 0. };
+    point b{ 0., 1., 0. };
+    vector v = b - a;
+
+    TestFixture::expect_vector_eq(v, vector{-1., 1., 0.});
+    TestFixture::expect_point_eq(a + v, b);
 }
