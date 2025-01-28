@@ -16,16 +16,16 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  helloworld
-  helloworld.cpp
+  geom_test
+  geom_test.cpp
 )
 target_link_libraries(
-  helloworld
+  geom_test
   GTest::gtest_main
   geometry
 )
 
-target_include_directories(helloworld PRIVATE ${PROJECT_BINARY_DIR}/include)
+target_include_directories(geom_test PRIVATE ${PROJECT_BINARY_DIR}/include)
 
 include(GoogleTest)
-gtest_discover_tests(helloworld)
+gtest_discover_tests(geom_test)

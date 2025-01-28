@@ -17,8 +17,6 @@ add_executable (segment_distance "main.cpp")
 
 target_link_libraries(segment_distance geometry)
 
-
-
 option(SEGMENT_DISTANSE_TESTING "Enable tests." ON)
 
 if(SEGMENT_DISTANSE_TESTING)
