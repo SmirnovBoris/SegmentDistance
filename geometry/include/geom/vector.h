@@ -9,6 +9,12 @@ namespace geom
 {
 
 template<class scalar_type>
+class Vector_3D;
+
+template<class scalar_type>
+Vector_3D<scalar_type> cross_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
+
+template<class scalar_type>
 class Vector_3D {
 
 public:
