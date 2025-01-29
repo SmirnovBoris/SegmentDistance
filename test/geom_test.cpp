@@ -2,6 +2,7 @@
 
 #include <geom/vector.h>
 #include <geom/basic_algorithm.h>
+#include <geom/distance.h>
 
 
 
@@ -11,6 +12,7 @@ public:
     using scalar_type = T;
     using point = geom::Point_3D<scalar_type>;
     using vector = geom::Vector_3D<scalar_type>;
+    using line = geom::Line_3D<scalar_type>;
 private:
     static constexpr scalar_type eps_value() {
         if constexpr (std::is_same_v<scalar_type, float>) {
@@ -93,4 +95,32 @@ TYPED_TEST(GeomTest, BasicAlgs) {
 
     TestFixture::expect_vector_eq(v, vector{-1., 1., 0.});
     TestFixture::expect_point_eq(a + v, b);
+
+    vector w{1., 0., 0.};
+    vector p{2., 0., 0.};
+    TestFixture::expect_vector_eq(w * 2., p);
+    TestFixture::expect_vector_eq(p.normalized(), w);
+}
+
+TYPED_TEST(GeomTest, DistanceLine) {
+    using vector =  typename TestFixture::vector; 
+    using point =  typename TestFixture::point;
+    using line =  typename TestFixture::line;
+
+    line l1(point{0., 0., 0.}, {1., 0., 0.});
+    line l2(point{0., 0., 0.}, {0., 1., 0.});
+
+    const auto& [p1, p2] = geom::closest_point_on_cross_lines(l1, l2);
+
+    TestFixture::expect_point_eq(p1, point{0., 0., 0.});
+    TestFixture::expect_point_eq(p2, point{0., 0., 0.});
+
+    line l3{point{-1., 0., -1.}, {1., 0., -1.}};
+    line l4{point{0., -1., 1.}, {0., 1., 1.}};
+
+    const auto& [p3, p4] = geom::closest_point_on_cross_lines(l3, l4);
+
+    TestFixture::expect_point_eq(p3, point{0., 0., -1.});
+    TestFixture::expect_point_eq(p4, point{0., 0., 1.});
+
 }

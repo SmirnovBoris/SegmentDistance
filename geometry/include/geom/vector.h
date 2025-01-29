@@ -15,6 +15,9 @@ template<class scalar_type>
 Vector_3D<scalar_type> cross_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
 
 template<class scalar_type>
+scalar_type dot_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
+
+template<class scalar_type>
 class Vector_3D {
 
 public:
@@ -40,18 +43,28 @@ public:
         return std::sqrt(dist2());
     }
 
-     Vector_3D operator* (scalar_type&& k) {
+    Vector_3D operator* (scalar_type k) const {
         return {x * k, y * k, z * k};
+    }
+
+    Vector_3D operator* (const Vector_3D& oth) {
+        return cross_product(*this, oth);
+    }
+
+    Vector_3D normalized() const {
+        scalar_type invert_len = 1. / dist();
+        return *this * invert_len;
     }
 
 private:
     scalar_type x, y, z;
 
     friend Vector_3D<scalar_type> cross_product<>(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
+    friend scalar_type dot_product<>(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
 }; 
 
 template<class scalar_type>
-Vector_3D<scalar_type> operator* (scalar_type&& k, Vector_3D<scalar_type>&& vec) {
+Vector_3D<scalar_type> operator* (scalar_type k, const Vector_3D<scalar_type>& vec) {
     return vec * k;
 }
 
@@ -72,6 +85,11 @@ Vector_3D<scalar_type> cross_product(const Vector_3D<scalar_type>& a, const Vect
         a.x * b.z - a.z * b.x,
         a.x * b.y - a.y * b.x  
     };
+}
+
+template<class scalar_type>
+scalar_type dot_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 } // namespace geom
