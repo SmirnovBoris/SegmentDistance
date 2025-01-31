@@ -4,6 +4,9 @@
 #include <geom/basic_algorithm.h>
 #include <geom/distance.h>
 
+#include <numeric>
+
+#include "test_algorithm.h"
 
 
 template <typename T>
@@ -13,6 +16,7 @@ public:
     using point = geom::Point_3D<scalar_type>;
     using vector = geom::Vector_3D<scalar_type>;
     using line = geom::Line_3D<scalar_type>;
+    using sector = geom::Sector_3D<scalar_type>;
 private:
     static constexpr scalar_type eps_value() {
         if constexpr (std::is_same_v<scalar_type, float>) {
@@ -36,6 +40,52 @@ public:
         EXPECT_NEAR(l.get_y(), r.get_y(), eps);
         EXPECT_NEAR(l.get_z(), r.get_z(), eps);
     }
+
+    static std::vector<point> gen_points(scalar_type from, scalar_type to) {
+        std::vector<point> points;
+        for (scalar_type x = from; x < to; x += 1.) {
+            for (scalar_type y = from; y < to; y += 1.) {
+                for (scalar_type z = from; z < to; z += 1.) {
+                    points.push_back(point{x, y, z});
+                }
+            }
+        }
+        return points;
+    }
+
+    static std::vector<point> gen_points_sorted(scalar_type from, scalar_type to) {
+        std::vector<point> points;
+        for (scalar_type x = from; x < to; x += 1.) {
+            for (scalar_type y = x; y < to; y += 1.) {
+                for (scalar_type z = y; z < to; z += 1.) {
+                    points.push_back(point{x, y, z});
+                }
+            }
+        }
+        return points;
+    }
+
+    static std::vector<sector> gen_sectors(scalar_type from, scalar_type to) {
+        std::vector<sector> sectors;
+        auto points = gen_points(from, to);
+        for (auto a : points) {
+            for (auto b : points) {
+                sectors.push_back(sector{a, b});
+            }
+        }
+        return sectors;
+    }
+
+    static std::vector<sector> gen_sectors_sorted(scalar_type from, scalar_type to) {
+        std::vector<sector> sectors;
+        auto points = gen_points(from, to);
+        for (size_t i = 0; i < points.size(); ++i) {
+            for (size_t j = i; j < points.size(); ++j) {
+                sectors.push_back(sector{points[i], points[j]});
+            }
+        }
+        return sectors;
+    }
 };
 
 using MyTypes = ::testing::Types<float, double>;
@@ -57,8 +107,8 @@ TYPED_TEST(GeomTest, Basics) {
     EXPECT_NEAR(30.f, v.get_z(), TestFixture::eps);
 
     scalar_type length = 37.416573867739;
-    EXPECT_NEAR(length, v.dist(), TestFixture::eps);
-    EXPECT_NEAR(std::pow(length, 2.), v.dist2(), TestFixture::eps);
+    EXPECT_NEAR(length, v.len(), TestFixture::eps);
+    EXPECT_NEAR(std::pow(length, 2.), v.len2(), TestFixture::eps);
 }
 
 
@@ -110,7 +160,7 @@ TYPED_TEST(GeomTest, DistanceLine) {
     line l1(point{0., 0., 0.}, {1., 0., 0.});
     line l2(point{0., 0., 0.}, {0., 1., 0.});
 
-    const auto& [p1, p2] = geom::closest_point_on_cross_lines(l1, l2);
+    const auto& [p1, p2] = geom::impl::closest_point_on_cross_lines(l1, l2);
 
     TestFixture::expect_point_eq(p1, point{0., 0., 0.});
     TestFixture::expect_point_eq(p2, point{0., 0., 0.});
@@ -118,9 +168,68 @@ TYPED_TEST(GeomTest, DistanceLine) {
     line l3{point{-1., 0., -1.}, {1., 0., -1.}};
     line l4{point{0., -1., 1.}, {0., 1., 1.}};
 
-    const auto& [p3, p4] = geom::closest_point_on_cross_lines(l3, l4);
+    const auto& [p3, p4] = geom::impl::closest_point_on_cross_lines(l3, l4);
 
     TestFixture::expect_point_eq(p3, point{0., 0., -1.});
     TestFixture::expect_point_eq(p4, point{0., 0., 1.});
+}
 
+TYPED_TEST(GeomTest, DistanceSector) {
+    using vector =  typename TestFixture::vector; 
+    using point =  typename TestFixture::point;
+    using sector =  typename TestFixture::sector;
+
+    sector a{point{0., 0., 0.}, point{1., 0., 0.}};
+    sector b{point{0., 0., 0.}, point{0., 1., 0.}};
+
+    EXPECT_NEAR(0.f, geom::distance(a, b), TestFixture::eps);
+}
+
+TYPED_TEST(GeomTest, DistanceAllPointsInSmallCube) {
+    using vector =  typename TestFixture::vector; 
+    using point =  typename TestFixture::point;
+    using sector =  typename TestFixture::sector;
+
+    auto sectors = TestFixture::gen_sectors(-1., 1.);
+    for (auto a : sectors) {
+        for (auto b : sectors) {
+            auto dist = geom::distance(a, b);
+            auto calc_dist = geom::test::distance(a, b);
+            EXPECT_NEAR(dist, calc_dist, TestFixture::eps);
+        }
+    }
+}
+
+TYPED_TEST(GeomTest, DistanceOneStaticSector) {
+    using vector =  typename TestFixture::vector; 
+    using point =  typename TestFixture::point;
+    using sector =  typename TestFixture::sector;
+    using scalar_type = typename TestFixture::scalar_type;
+
+    auto sectors = TestFixture::gen_sectors(-2., 3.);
+    for (scalar_type len : {0., .5, 2., 3., 5., 10.}) {
+        sector b{point{-len, 0., 0.}, point{len, 0., 0.}};
+        for (auto a : sectors) {
+            auto dist = geom::distance(a, b);
+            auto calc_dist = geom::test::distance(a, b);
+            EXPECT_NEAR(dist, calc_dist, TestFixture::eps);
+        }
+    }
+}
+
+TYPED_TEST(GeomTest, DistanceOneStaticSectorSorted) {
+    using vector =  typename TestFixture::vector; 
+    using point =  typename TestFixture::point;
+    using sector =  typename TestFixture::sector;
+    using scalar_type = typename TestFixture::scalar_type;
+
+    auto sectors = TestFixture::gen_sectors_sorted(-3., 4.);
+    for (scalar_type len : {0., .5, 5., 10.}) {
+        sector b{point{-len, 0., 0.}, point{len, 0., 0.}};
+        for (auto a : sectors) {
+            auto dist = geom::distance(a, b);
+            auto calc_dist = geom::test::distance(a, b);
+            EXPECT_NEAR(dist, calc_dist, TestFixture::eps);
+        }
+    }
 }

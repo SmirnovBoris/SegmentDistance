@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace geom {
 
 template<class scalar_type>
@@ -11,10 +13,6 @@ public:
         , y{ y }
         , z{ z } 
     {}
-
-    scalar_type dist2() const {
-        return x * x + y * y + z * z;
-    }
 
     const scalar_type& get_x() const { return x; }
     const scalar_type& get_y() const { return y; }

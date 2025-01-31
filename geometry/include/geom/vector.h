@@ -35,24 +35,24 @@ public:
     const scalar_type& get_y() const { return y; }
     const scalar_type& get_z() const { return z; }
 
-    const scalar_type dist2() const {
+    const scalar_type len2() const {
         return x * x + y * y + z * z;
     }
 
-    const scalar_type dist() const {
-        return std::sqrt(dist2());
+    const scalar_type len() const {
+        return std::sqrt(len2());
     }
 
     Vector_3D operator* (scalar_type k) const {
         return {x * k, y * k, z * k};
     }
 
-    Vector_3D operator* (const Vector_3D& oth) {
+    Vector_3D operator* (const Vector_3D& oth) const {
         return cross_product(*this, oth);
     }
 
     Vector_3D normalized() const {
-        scalar_type invert_len = 1. / dist();
+        scalar_type invert_len = 1. / len();
         return *this * invert_len;
     }
 
