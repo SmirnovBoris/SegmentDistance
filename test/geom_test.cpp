@@ -214,7 +214,7 @@ TYPED_TEST(GeomTest, DistanceOneStaticSectorSorted) {
     using scalar_type = typename TestFixture::scalar_type;
 
     auto sectors = TestFixture::gen_sectors_sorted(-3., 4.);
-    for (scalar_type len : {0., .5, 5., 10.}) {
+    for (scalar_type len : {0., .5, 5., 100.}) {
         sector b{point{-len, 0., 0.}, point{len, 0., 0.}};
         for (auto a : sectors) {
             auto dist = geom::distance(a, b);

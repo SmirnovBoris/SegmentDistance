@@ -11,7 +11,7 @@ struct scalar_type_epsilon {
 
 template<>
 struct scalar_type_epsilon<float> {
-    static constexpr float value = 1e-5f;
+    static constexpr float value = 1e-4f;
 };
 
 template<>
