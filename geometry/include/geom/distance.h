@@ -11,7 +11,7 @@ namespace geom
 
 namespace impl
 {
-template<class scalar_type>
+template<std::floating_point scalar_type>
 std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_lines(
     const Line_3D<scalar_type>& a, const Line_3D<scalar_type>& b) 
 {
@@ -33,7 +33,7 @@ std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_l
 }
 } // namespace impl
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 scalar_type distance(const Sector_3D<scalar_type>& first_sector, 
                      const Sector_3D<scalar_type>& second_sector) 
 {

@@ -4,7 +4,7 @@
 
 namespace geom {
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 class Point_3D {
 
 public:

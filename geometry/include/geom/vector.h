@@ -8,16 +8,16 @@
 namespace geom
 {
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 class Vector_3D;
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 Vector_3D<scalar_type> cross_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 scalar_type dot_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 class Vector_3D {
 
 public:
@@ -63,12 +63,12 @@ private:
     friend scalar_type dot_product<>(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b);
 }; 
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 Vector_3D<scalar_type> operator* (scalar_type k, const Vector_3D<scalar_type>& vec) {
     return vec * k;
 }
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 bool vector_eq(const Vector_3D<scalar_type>& l, const Vector_3D<scalar_type>& r, scalar_type eps) {
     auto eq = [eps](auto l, auto r) {
         return std::abs(l - r) < eps;
@@ -78,7 +78,7 @@ bool vector_eq(const Vector_3D<scalar_type>& l, const Vector_3D<scalar_type>& r,
            eq(l.get_z(), r.get_z());
 }
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 Vector_3D<scalar_type> cross_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b) {
     return Vector_3D<scalar_type>{ 
         a.y * b.z - a.z * b.y,
@@ -87,7 +87,7 @@ Vector_3D<scalar_type> cross_product(const Vector_3D<scalar_type>& a, const Vect
     };
 }
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 scalar_type dot_product(const Vector_3D<scalar_type>& a, const Vector_3D<scalar_type>& b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }

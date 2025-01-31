@@ -5,7 +5,7 @@
 
 namespace geom {
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 class Sector_3D {
 public:
     using point = Point_3D<scalar_type>;

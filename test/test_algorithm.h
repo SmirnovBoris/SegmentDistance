@@ -6,7 +6,7 @@
 namespace geom::test
 {
 
-template<class scalar_type>
+template<std::floating_point scalar_type>
 scalar_type distance(const Sector_3D<scalar_type>& first_sector, 
                      const Sector_3D<scalar_type>& second_sector) 
 {
