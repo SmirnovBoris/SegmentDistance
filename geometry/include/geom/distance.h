@@ -5,6 +5,7 @@
 #include <optional>
 #include "line.h"
 #include "sector.h"
+#include "basic_algorithm.h"
 
 namespace geom
 {
@@ -20,7 +21,7 @@ std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_l
     const auto& w = b.get_vector();
 
     scalar_type vw = dot_product(v, w);
-    if (std::abs(vw - 1.) < std::numeric_limits<scalar_type>::epsilon()) {
+    if (std::abs(vw - 1.) < epsilon<scalar_type>) {
         throw std::runtime_error("lines are parallel");
     }
     scalar_type cv = dot_product(c, v);
@@ -39,7 +40,7 @@ scalar_type distance(const Sector_3D<scalar_type>& first_sector,
 {
     using point = Point_3D<scalar_type>;
     using line = Line_3D<scalar_type>;
-    static constexpr auto eps = std::numeric_limits<scalar_type>::epsilon();
+    static constexpr auto eps = epsilon<scalar_type>;
     
     std::vector<point> first_sector_interested_points{
         first_sector.get_first_point(), 

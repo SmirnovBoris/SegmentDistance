@@ -2,6 +2,7 @@
 
 #include "vector.h"
 #include "sector.h"
+#include "basics.h"
 
 namespace geom
 {
@@ -29,7 +30,7 @@ private:
 
     static vector base_vector(const point& a, const point& b) {
         vector base = b - a;
-        if (base.len2() < std::numeric_limits<scalar_type>::epsilon()) {
+        if (base.len2() < epsilon<scalar_type>) {
             throw std::runtime_error("cannot initialize line from 1 point");
         }
         return base.normalized();
