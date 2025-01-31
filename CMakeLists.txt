@@ -17,6 +17,15 @@ add_executable (segment_distance "main.cpp")
 
 target_link_libraries(segment_distance geometry)
 
+include(FetchContent)
+FetchContent_Declare(
+    argparse
+    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+)
+FetchContent_MakeAvailable(argparse)
+
+target_link_libraries(segment_distance argparse)
+
 option(SEGMENT_DISTANSE_TESTING "Enable tests." ON)
 
 if(SEGMENT_DISTANSE_TESTING)

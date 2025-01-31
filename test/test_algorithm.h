@@ -1,6 +1,7 @@
 #pragma once
 
 #include "geom/sector.h"
+
 #include <ranges>
 
 namespace geom::test

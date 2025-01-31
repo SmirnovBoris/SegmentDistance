@@ -176,10 +176,6 @@ TYPED_TEST(GeomTest, DistanceSector) {
 }
 
 TYPED_TEST(GeomTest, DistanceAllPointsInSmallCube) {
-    using vector =  typename TestFixture::vector; 
-    using point =  typename TestFixture::point;
-    using sector =  typename TestFixture::sector;
-
     auto sectors = TestFixture::gen_sectors(-1., 1.);
     for (auto a : sectors) {
         for (auto b : sectors) {
@@ -191,7 +187,6 @@ TYPED_TEST(GeomTest, DistanceAllPointsInSmallCube) {
 }
 
 TYPED_TEST(GeomTest, DistanceOneStaticSector) {
-    using vector =  typename TestFixture::vector; 
     using point =  typename TestFixture::point;
     using sector =  typename TestFixture::sector;
     using scalar_type = typename TestFixture::scalar_type;
@@ -208,7 +203,6 @@ TYPED_TEST(GeomTest, DistanceOneStaticSector) {
 }
 
 TYPED_TEST(GeomTest, DistanceOneStaticSectorSorted) {
-    using vector =  typename TestFixture::vector; 
     using point =  typename TestFixture::point;
     using sector =  typename TestFixture::sector;
     using scalar_type = typename TestFixture::scalar_type;

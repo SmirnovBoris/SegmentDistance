@@ -5,6 +5,8 @@
 #include "basic_algorithm.h"
 #include "basics.h"
 
+#include <concepts>
+
 namespace geom {
 
 template<std::floating_point scalar_type>

@@ -1,11 +1,14 @@
 #pragma once
 
+#include "sector.h"
+#include "line.h"
+#include "basic_algorithm.h"
+
 #include <algorithm>
 #include <stdexcept>
+#include <vector>
 #include <optional>
-#include "line.h"
-#include "sector.h"
-#include "basic_algorithm.h"
+
 
 namespace geom
 {

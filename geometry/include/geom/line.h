@@ -1,11 +1,16 @@
 #pragma once
 
 #include "vector.h"
-#include "sector.h"
 #include "basics.h"
+#include "sector.h"
+
+#include <stdexcept>
 
 namespace geom
 {
+template<std::floating_point scalar_type>
+class Sector_3D;
+
 template<std::floating_point scalar_type>
 class Line_3D {
 public:
