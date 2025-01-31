@@ -17,17 +17,7 @@ public:
     using vector = geom::Vector_3D<scalar_type>;
     using line = geom::Line_3D<scalar_type>;
     using sector = geom::Sector_3D<scalar_type>;
-private:
-    static constexpr scalar_type eps_value() {
-        if constexpr (std::is_same_v<scalar_type, float>) {
-            return 1.e-4f;
-        }
-        if constexpr (std::is_same_v<scalar_type, double>) {
-            return 1.e-5;
-        }
-    }
-public:
-    static constexpr scalar_type eps = eps_value();
+    static constexpr scalar_type eps = geom::epsilon<scalar_type>;
 
     static void expect_vector_eq(const vector& l, const vector& r) {
         EXPECT_NEAR(l.get_x(), r.get_x(), eps);
