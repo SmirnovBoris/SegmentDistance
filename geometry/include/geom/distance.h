@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <vector>
+#include <array>
 #include <optional>
 
 namespace geom

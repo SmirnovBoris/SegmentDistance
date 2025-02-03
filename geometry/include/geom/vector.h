@@ -8,6 +8,23 @@
 
 namespace geom
 {
+namespace detail
+{
+double constexpr sqrt(double x, double curr, double prev)
+{
+    return curr == prev
+        ? curr
+        : sqrt(x, 0.5 * (curr + x / curr), curr);
+}
+}  // namespace detail
+
+template<std::floating_point scalar_type>
+constexpr scalar_type sqrt(scalar_type x)
+{
+    return x >= 0 && x < std::numeric_limits<scalar_type>::infinity()
+        ? detail::sqrt(x, x, 0)
+        : std::numeric_limits<scalar_type>::quiet_NaN();
+}
 
 template<std::floating_point scalar_type>
 class Vector_3D;
@@ -41,7 +58,7 @@ public:
     }
 
     constexpr scalar_type len() const {
-        return std::sqrt(len2());
+        return ::geom::sqrt(len2());
     }
 
     constexpr Vector_3D operator* (scalar_type k) const {
