@@ -14,23 +14,23 @@ class Sector_3D {
 public:
     using point = Point_3D<scalar_type>;
     
-    Sector_3D(const point& a, const point& b) 
+    constexpr Sector_3D(const point& a, const point& b) 
         : a{a}
         , b{b}
     {}
-    point get_first_point() const {
+    constexpr point get_first_point() const {
         return a;
     }
-    point get_second_point() const {
+    constexpr point get_second_point() const {
         return b;
     }
 
-    scalar_type len2() const {
+    constexpr scalar_type len2() const {
         return (a - b).len2();
     }
 
-    bool contains(const point& p) const {
-        static constexpr scalar_type eps = epsilon<scalar_type>;
+    constexpr bool contains(const point& p) const {
+        constexpr scalar_type eps = epsilon<scalar_type>;
         auto v = b - a;
         auto w = p - a;
         auto t = dot_product(v, w) / v.len2();

@@ -217,3 +217,20 @@ TYPED_TEST(GeomTest, DistanceOneStaticSectorSorted) {
         }
     }
 }
+
+TYPED_TEST(GeomTest, constexprTest) {
+    using point =  typename TestFixture::point;
+    using sector =  typename TestFixture::sector;
+    using scalar_type = typename TestFixture::scalar_type;
+
+    constexpr point a{0., 0., 1.};
+    constexpr point b{0., 0., 2.};
+    constexpr sector s{a, b};
+    static_assert(s.get_first_point().get_z() == 1.);
+
+    constexpr sector t{point{1., 0., 0.}, point{2., 0., 0.}};
+
+    constexpr scalar_type dist = geom::distance(s, t);
+    constexpr scalar_type ans = 1.4142135623730951;
+    static_assert(ans - TestFixture::eps < dist && dist < ans + TestFixture::eps);
+}

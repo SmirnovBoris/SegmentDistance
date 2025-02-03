@@ -9,14 +9,13 @@
 #include <vector>
 #include <optional>
 
-
 namespace geom
 {
 
 namespace impl
 {
 template<std::floating_point scalar_type>
-std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_lines(
+constexpr std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_lines(
     const Line_3D<scalar_type>& a, const Line_3D<scalar_type>& b) 
 {
     auto c = a.get_point() - b.get_point();
@@ -24,9 +23,6 @@ std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_l
     const auto& w = b.get_vector();
 
     scalar_type vw = dot_product(v, w);
-    if (std::abs(vw - 1.) < epsilon<scalar_type>) {
-        throw std::runtime_error("lines are parallel");
-    }
     scalar_type cv = dot_product(c, v);
     scalar_type cw = dot_product(c, w);
 
@@ -38,54 +34,57 @@ std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_on_cross_l
 } // namespace impl
 
 template<std::floating_point scalar_type>
-scalar_type distance(const Sector_3D<scalar_type>& first_sector, 
+constexpr scalar_type distance(const Sector_3D<scalar_type>& first_sector, 
                      const Sector_3D<scalar_type>& second_sector) 
 {
     using point = Point_3D<scalar_type>;
     using line = Line_3D<scalar_type>;
-    static constexpr auto eps = epsilon<scalar_type>;
+    constexpr auto eps = epsilon<scalar_type>;
     
-    std::vector<point> first_sector_interested_points{
-        first_sector.get_first_point(), 
-        first_sector.get_second_point()};
-    std::vector<point> second_sector_interested_points{
-        second_sector.get_first_point(), 
-        second_sector.get_second_point()};
-    std::optional<line> first_line;
-    if (first_sector.len2()) {
-        first_line = first_sector;
-    }
-    std::optional<line> second_line;
-    if (second_sector.len2()) {
-        second_line = second_sector;
-    }
+    
+    bool has_first_line = first_sector.len2() > eps;
+    bool has_second_line = second_sector.len2() > eps;
+    bool lines_cross = has_first_line && has_second_line && (line{first_sector}.get_vector() * line{second_sector}.get_vector()).len2() > eps;
 
     const auto& add_first_point = [&](const point& p) {
         if (first_sector.contains(p)) {
-            first_sector_interested_points.push_back(p);
+            return p;
         }
-
+        return first_sector.get_first_point();
     };
     const auto& add_second_point = [&](const point& p) {
         if (second_sector.contains(p)) {
-            second_sector_interested_points.push_back(p);
+            return p;
         }
+        return second_sector.get_first_point();
+    };
+    const auto& crooss_point = [&](bool first) {
+        if (first) {
+            if (lines_cross) {
+                return add_first_point(impl::closest_point_on_cross_lines(line{first_sector}, line{second_sector}).first);
+            }
+            return first_sector.get_first_point();
+        }
+        if (lines_cross) {
+            return add_second_point(impl::closest_point_on_cross_lines(line{first_sector}, line{second_sector}).second);
+        }
+        return second_sector.get_first_point();
     };
 
-    if (first_line && second_line && (first_line->get_vector() * second_line->get_vector()).len2() > eps) {
-        const auto& [first_line_point, second_line_point] = 
-            impl::closest_point_on_cross_lines(*first_line, *second_line);
-        add_first_point(first_line_point);
-        add_second_point(second_line_point);
-    }
-    if (first_line) {
-        add_first_point(projection(*first_line, second_sector.get_first_point()));
-        add_first_point(projection(*first_line, second_sector.get_second_point()));
-    }
-    if (second_line) {
-        add_second_point(projection(*second_line, first_sector.get_first_point()));
-        add_second_point(projection(*second_line, first_sector.get_second_point()));
-    }
+    std::array<point, 5> first_sector_interested_points{
+        first_sector.get_first_point(), 
+        first_sector.get_second_point(),
+        crooss_point(true),
+        has_first_line ? add_first_point(projection(line{first_sector}, second_sector.get_first_point())) : first_sector.get_first_point(),
+        has_first_line ? add_first_point(projection(line{first_sector}, second_sector.get_second_point())) : first_sector.get_first_point()
+    };
+    std::array<point, 5> second_sector_interested_points{
+        second_sector.get_first_point(), 
+        second_sector.get_second_point(),
+        crooss_point(false),
+        has_second_line ? add_second_point(projection(line{second_sector}, first_sector.get_first_point())) : second_sector.get_first_point(),
+        has_second_line ? add_second_point(projection(line{second_sector}, first_sector.get_second_point())) : second_sector.get_first_point()
+    };
 
     scalar_type res = std::numeric_limits<scalar_type>::infinity();
     for (const auto& p1 : first_sector_interested_points) {
