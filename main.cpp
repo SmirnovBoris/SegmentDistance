@@ -8,6 +8,7 @@
 #include "argparse/argparse.hpp"
 
 #include <iostream>
+#include <format>
 #include <ranges>
 #include <cassert>
 
@@ -36,6 +37,10 @@ int main(int argc, char *argv[])
 		.help("4 points - boundaries of 2 segments")
 		.nargs(4 * 3)
 		.scan<'g', double>();
+	program.add_argument("-d", "--digits")
+		.help("digits after point")
+		.scan<'i', int>()
+		.default_value(4);
 	try {
 		program.parse_args(argc, argv);
 	} 
@@ -55,7 +60,7 @@ int main(int argc, char *argv[])
 		from_span(points.subspan(9, 3))
 	);
 	
-	std::cout << distanse << std::endl;
+	std::cout << std::format("{:.{}f}", distanse, program.get<int>("digits")) << std::endl;
 
 	return 0;
 }
