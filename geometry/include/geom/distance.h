@@ -27,7 +27,7 @@ constexpr std::pair<Point_3D<scalar_type>, Point_3D<scalar_type>> closest_point_
     scalar_type cv = dot_product(c, v);
     scalar_type cw = dot_product(c, w);
 
-    scalar_type u = (cw - cv * vw) / (1. - vw * vw));
+    scalar_type u = (cw - cv * vw) / (1. - vw * vw);
     scalar_type t = u * vw - cv;
 
     return {a.get_point() + t * a.get_vector(), b.get_point() + u * b.get_vector()};
